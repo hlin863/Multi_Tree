@@ -31,7 +31,7 @@ void *recursiveSearch(MULTIWAY_TREE* tree, NODE *node, void *target){
     /*
         initialise a found location to track the variables.  
     */
-    int foundLocation = node->entries - 1;
+    int foundLocation = node->nEntries - 1;
 
     if (!node){
         return NULL;
@@ -112,7 +112,7 @@ bool insertNode(MULTIWAY_TREE* tree, NODE *node, void *data, ENTRY *upEntry){
         return true;
     }
 
-    entryNode = searchTree(tree, data);
+    entryNode = (int)recursiveSearch(tree, node, data);
 
     compare = tree->compare(data, node->entries[entryNode].data);
 
@@ -141,7 +141,35 @@ bool insertNode(MULTIWAY_TREE* tree, NODE *node, void *data, ENTRY *upEntry){
     }
 
     return successful;
-    
+
+}
+
+void insertEntry(NODE* node, ENTRY *upEntry, int entryNode){
+    int i; // variable to track the index.
+
+    if (node->nEntries == 0){
+        // if the node is empty.
+        node->entries = (ENTRY *)malloc(sizeof(ENTRY));
+        node->entries[0].data = upEntry->data;
+    }
+
+    if (node->nEntries == 1){
+        // if the node is full.
+        node->entries = (ENTRY *)realloc(node->entries, sizeof(ENTRY) * 2);
+        node->entries[1].data = upEntry->data;
+    }
+
+    if (node->nEntries > 1){
+        // if the node is full.
+        node->entries = (ENTRY *)realloc(node->entries, sizeof(ENTRY) * (node->nEntries + 1));
+        for (i = node->nEntries; i > entryNode; i--){
+            node->entries[i].data = node->entries[i - 1].data;
+            node->entries[i].right = node->entries[i - 1].right;
+        }
+        node->entries[entryNode].data = upEntry->data;
+        node->entries[entryNode].right = upEntry->right;
+    }
+
 }
 
 int compare(void *data1, void *data2){
@@ -176,9 +204,29 @@ void testCompare(){
     printf("%d\n", compare(a, b));
 }
 
+void testInsert(MULTIWAY_TREE *tree){
+
+    char *a = "Labrador";
+    char *b = "Penguin";
+    char *c = "Beagle";
+
+    insertTree(tree, a);
+    insertTree(tree, b);
+    insertTree(tree, c);
+
+    printf("Insert %s\n", a);
+    printf("Insert %s\n", b);
+    printf("Insert %s\n", c);
+    
+    printf("%s\n", (char *)searchTree(tree, a));
+
+}
+
 int main(){
 
     MULTIWAY_TREE *tree = createTree(compare);
+
+    testInsert(tree);
 
     testCompare();
 
