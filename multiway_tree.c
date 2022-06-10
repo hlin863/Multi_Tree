@@ -57,48 +57,98 @@ void *recursiveSearch(MULTIWAY_TREE* tree, NODE *node, void *target){
     }
 }
 
-void *traversal(NODE *node, void (*process) (void *data)){
-    NODE* temp; // temp variable to track the nodes. 
-    int index; // index to track through the subtree. 
+// void *traversal(NODE *node, void (*process) (void *data)){
+//     NODE* temp; // temp variable to track the nodes. 
+//     int index; // index to track through the subtree. 
 
-    temp = node->first;
+//     temp = node->first;
 
-    while (index < node->entries){
-        if (temp){
-            traversal(temp, process);
-        }
+//     while (index < node->entries){
+//         if (temp){
+//             traversal(temp, process);
+//         }
 
-        if (index < node->entries){
-            process(node->entries[index].data);
-            temp = temp->entries[index].right;
-        }
+//         if (index < node->entries){
+//             process(node->entries[index].data);
+//             temp = temp->entries[index].right;
+//         }
 
-        index++;
+//         index++;
+//     }
+
+//     return;
+
+// }
+
+void insertTree(MULTIWAY_TREE *tree, void *data){
+    if (tree == NULL){
+        // create a new node when the tree is NULL.
+        NODE* node = (NODE *)malloc(sizeof(NODE));
+        node->first = NULL;
+        node->entries = (ENTRY *)malloc(sizeof(ENTRY));
+        // set the first entry to the data.
+        node->entries[0].data = data;
+        // set the right element as NULL.
+        node->entries[0].right = NULL;
+        // set the number of entries to 1.
+        node->nEntries = 1;
+        // set the root to the node.
+        tree->root = node;
+    }
+}
+
+bool insertNode(MULTIWAY_TREE* tree, NODE *node, void *data, ENTRY *upEntry){
+    int entryNode; // variable to track the entry node.
+
+    if (node == NULL){
+        // if the root is null.
+        (*upEntry).data = data;
+        (*upEntry).right = NULL;
+        return true;
     }
 
-    return;
+    entryNode = searchTree(tree, data);
+
+    return true;
+}
+
+int compare(void *data1, void *data2){
+    
+    char *str1 = (char *)data1;
+    char *str2 = (char *)data2;
+
+    printf("Comparing %s and %s\n", str1, str2);
+
+    return strcmp(str1, str2);
 
 }
 
-void insert(NODE *node, void *data){
-    /*
-        if tree is empty, create new node 
-    */
-   if (node == NULL){
-        node = (NODE*) malloc(sizeof(NODE));
-    //    set the left subtree of the node to NULL.
-        node->first = NULL;
-    // move data to the first entry in the new node.
-        node->entries[0].data = data;
-    // set the subtree of the first entry to NULL.
-        node->entries[0].right = NULL;
-    // set the number of entries in the node to 1.
-        node->nEntries = 1;
-   } else {
-       insertNode(node, data, NULL);
-   }
+void testCompare(){
+    // test 1 compare when string a is less than string b.
+    char *a = "Labrador";
+    char *b = "Penguin";
+
+    printf("%d\n", compare(a, b));
+
+    // test 2 compare when string a is greater than string b.
+    a = "Penguin";
+    b = "Labrador";
+
+    printf("%d\n", compare(a, b));
+
+    // test 3 compare when string a is equal to string b.
+
+    a = "Labrador";
+    b = "Labrador";
+
+    printf("%d\n", compare(a, b));
 }
 
-NODE *insertNode(NODE *node, void *data, ENTRY *upEntry){
+int main(){
+
+    MULTIWAY_TREE *tree = createTree(compare);
+
+    testCompare();
 
 }
+

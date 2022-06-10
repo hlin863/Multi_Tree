@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
 typedef struct entry {
     void *data;
@@ -47,15 +49,13 @@ void *searchTree(MULTIWAY_TREE *tree, void *data);
 /******************************************************************************/
 void *recursiveSearch(MULTIWAY_TREE* tree, NODE *node, void *target);
 
-void traversal(NODE *node, void (*process) (void *data));
-
-
-    * Inserts data into the tree.                                                
-    * @param node The root of the tree.
-    * @param data The data to insert.
-*/                                       
+/******************************************************************************
+ * Function: insert_multiway_tree
+ * Description: Inserts an entry into the tree
+ * Parameters: tree - the tree to insert into.
+ *             data - the data to insert
 /******************************************************************************/
-void insert(NODE *node, void *data);
+void insertTree(MULTIWAY_TREE *tree, void *data);
 
 /******************************************************************************/
 /*
@@ -66,4 +66,15 @@ void insert(NODE *node, void *data);
     * @return tree with the data inserted if the data is not in the tree.
 */
 /******************************************************************************/
-NODE *insertNode(NODE *node, void *data, ENTRY *upEntry);
+bool insertNode(MULTIWAY_TREE* tree, NODE *node, void *data, ENTRY *upEntry);
+
+/******************************************************************************
+ * Function: compare
+ * Description: Compares two entries
+ * Parameters: data1 - the first entry
+ *             data2 - the second entry
+ * Returns: 0 if the entries are equal, -1 if data1 < data2, 1 if data1 > data2
+/******************************************************************************/
+int compare(void *data1, void *data2);
+
+void testCompare();
