@@ -99,6 +99,11 @@ void insertTree(MULTIWAY_TREE *tree, void *data){
 
 bool insertNode(MULTIWAY_TREE* tree, NODE *node, void *data, ENTRY *upEntry){
     int entryNode; // variable to track the entry node.
+    int compare; // variable to track the comparison.
+
+    NODE *subtree; // variable to track the subtree.
+
+    bool successful; // variable to track the success of the insert.
 
     if (node == NULL){
         // if the root is null.
@@ -109,7 +114,34 @@ bool insertNode(MULTIWAY_TREE* tree, NODE *node, void *data, ENTRY *upEntry){
 
     entryNode = searchTree(tree, data);
 
-    return true;
+    compare = tree->compare(data, node->entries[entryNode].data);
+
+    if (entryNode <= 0 && compare < 0){
+        // if the data is less than the first entry.
+        subtree = node->first;
+    } else {
+        // if the data is greater than the first entry.
+        subtree = node->entries[entryNode].right;
+    }
+
+    successful = insertNode(tree, subtree, data, upEntry); // determine if the tree has been taller after the insert. 
+
+    if (successful){
+        
+        if (compare >= 0){
+            insertEntry(node, upEntry, entryNode + 1);
+        } else {
+            insertEntry(node, upEntry, entryNode);
+        }
+
+        (node->nEntries) += 1;
+
+        successful = false;
+            
+    }
+
+    return successful;
+    
 }
 
 int compare(void *data1, void *data2){
